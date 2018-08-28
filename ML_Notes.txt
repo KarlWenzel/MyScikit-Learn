@@ -1,0 +1,160 @@
+Data Sources: p34 Hands On ML
+scikit-learn project abstract: https://arxiv.org/pdf/1309.0238v1.pdf
+
+ML Factors
+==========
+1. supervised | unsupervised | semisupervised | reinforcement learning
+	- note that supervised learning uses "labeled data" i.e. each input is decorated w/ a desired output
+2. batch or incremental (i.e. online) learning
+	- in-core or out-of-core
+	- splitting batch across multiple servers can be done with MapReduce
+3. model based or instance based
+4. utility function vs cost function
+5. learning rate
+
+ML Challenges
+=============
+- corpus to small
+- nonrepresentative training data
+	- sampling noise (corpus is small, i.e. nonrepresentative due to chance)
+	- sampling bias (flaw in the sampling method)
+- poor quality data
+- irrelevant features
+	- mitigate with feature engineering: { selection, extraction, creation }
+- overfitting the training data (i.e. overgeneralizing)
+	- regularization - contraining the model to simplify it and reduce overfitting
+- underfitting the training data
+
+Testing, Validation, Exploring
+==============================
+- training data set (contains training and validation data if used)
+	- produces training error
+	- validation data can be used as testing for hyperparameter selection
+- exploration data set is sampling from the training set
+	- important to do data discovery while remaining agnostic of the test data (avoid data snooping bias)
+	- subsetting the training data may help with easy in work, but must be done carefully to avoid skewing
+- test data set
+	- produces generalization error, i.e. out-of-sample error
+	- best to segregate data into test sets using a deterministic process on a natural key
+- if training error is high, then underfitting
+- if training error is low but generalization error is high, then overfitting
+- rule of thumb: 80% of data for training set, 20% of data for test set
+- cross-validation: use different subsets of training and validation data on each run
+
+Hyperparameters
+===============
+Regularization
+
+Learning Algorithms 
+===================
+
+Linear Regression
+	supervised
+	model based: you find a line (y = a + bx) with values [a,b] that minimize the cost function
+	univariate or multivariate
+	
+K-Nearest Neighbors Regression
+	supervised
+	instance based
+	
+ML Workflow
+===========
+(see appendinx B of Hands On ML)
+1. Look at big picture
+2. Get the data
+3. Discover and visual data to obtain insight (see sample workflow)
+4. Prepare data for ML algorithms
+5. Select model and train it
+6. Fine-tune the model
+7. Present solution
+8. Launch, monitor, and maintain the system
+
+Sample Workflow
+===============
+Split training and test data
+	numpy.random.permutation()
+	hashlib.hash()
+	sklearn.model_selection.train_test_split()
+	sklearn.model_selection.StratifiedShuffleSplit
+Explore - Visualize Data
+	matplotlib.pyplot
+		%matplotlib inline # for Jupyter
+		import matplotlib.pyplot as plt
+		some_dataTable.hist(bins = 50, figsize=(20,15))
+		plt.show()
+Explore - Search for correlation
+	pandas.DataFrame.corr()
+	pandas.tools.plotting.scatter_matrix
+Transform - Deal with missing values
+	pandas.DataFrame.dropna()	# remove rows w/ missing values
+	pandas.DataFrame.drop()		# remove column all together if too many missing values
+	pandas.DataFrame.fillna()	# replace missing values with 0, mean, etc.
+	sklearn.preprocessing.Imputer	(pg 61 of Hands On ML)
+Transform - Generate features
+	- bell curve is good, tail-heavy is bad: consider using logarithm instead
+	- create discrete ranges for categories instead of continuous data in certain cases
+	sklearn.preprocessing.LabelEncoder (p63)
+	sklearn.preprocessing.OneHotEncoder (p64)
+Transform - Custom
+	Scikit-Learn pipelines and such use duck typing, so roll your own classes with methods (p65):
+		fit() #returns self
+		transform()
+		fit_transform()
+Transform - Scaling
+	normalization, i.e. min-max scaling, i.e. convert range to [0,1]
+		sklearn.preprocessing.MinMaxScaler
+	standardization, i.e. subtract mean and divide by std dev
+		sklearn.preprocessing.StandardScaler
+		* is less affected by outliers than min-max scaling
+Transform -Pipelines
+	sklearn.pipeline.Pipeline
+	sklearn.pipeline.FeeatureUnion
+Training - Algorithms
+	- use the .fit() and .predict() methods
+	sklearn.metrics.mean_squared_error
+	sklearn.linear_model.LinearRegression
+	sklearn.tree.DecisionTreeRegressor
+	sklearn.tree.RandomForestRegressor # an ensemble learning approach w/ decision trees
+Training - Cross-Validation
+	- splits training set into folds i.e. subsets
+	sklearn.model_selection.cross_val_score (p70)
+		- expects utility function, not cost function
+
+
+Performance Measure
+===================
+root mean square error (RMSE): root of sum of squared diff  *** generally the perferred performance measure
+	l2 norm, i.e. Euclidian norm
+mean absolute error (MAE): sum of absolute value of each diff *** may be better if many outlier districts
+	l1 norm, i.e. Manhattan norm
+
+
+
+
+Neural Networks
+===============
+
+recommended reading / watching: 
+	Winners Curse? by D. Scully et al
+	Ali Rahimi's acceptance speach talk at NIPS
+
+A neural network neuron function described by https://boingboing.net/2018/08/20/must-see-tv.html
+	i_x = input x
+	w_x = weight x
+	f() = nonlinear function (like a hyperbolic tangent (tanh) function)
+	f (  (w0*i0)  +  (w1*i1)  ) = output
+	Train the method s.t. we find weights that produce outputs as close as possible
+	Error = diffence between the output of trainig classification vs cannon classification
+		- a field of error values based on weights called a "contour graph"
+		- no apriori 
+		- try to reduce errors using gradient descent, which is start somewhere and make steps towards a lower place in the contour graph
+	hyperparameters
+		- what f() to use?
+		- during gradient descent, how big of a step size?
+		- how many layers should we use?
+		- how big should each layer be?
+
+Unfortunately neural networks are in conflict with the goal of computer security:
+	- ensure that systems "do the right thing" even in the presence of malicious input
+
+	
