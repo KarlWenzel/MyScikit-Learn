@@ -33,11 +33,13 @@ df = pd.DataFrame(
 df.index
 df.columns
 df.values
-df.describe() # really cool
+df.info() # types, size
+df.describe() # min/max, quantiles, mean, std
 df.T # transpose
 df.sort_index(axis = 1, ascending = False) # note we have a 1-axis index
 df.sort_values(by = "B")
 df2 = df.copy()
+df.drop(columns=["A","B"], axis=1) # this returns a copy of the table - does not change it in place
 
 # In all cases, selection will result in a dynically choosen type depending on what is being returned. It will be one of the following:
 #  - Scalar
